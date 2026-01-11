@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vein Striker - esprots app</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #090014;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent-1: #b000ff; /* Neon Purple */
+            --accent-2: #00eaff; /* Cyan */
+            --text-main: #ffffff;
+            --text-sec: #a0a0b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Ambient Background Glows */
+        .glow-blob {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            opacity: 0.4;
+            animation: float 10s infinite ease-in-out;
+        }
+        .blob-1 { background: var(--accent-1); top: -200px; left: -100px; }
+        .blob-2 { background: var(--accent-2); bottom: -200px; right: -100px; animation-delay: 2s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 50px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* --- Header --- */
+        header {
+            position: fixed;
+            top: 20px;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+        }
+
+        .glass-nav {
+            background: rgba(15, 5, 25, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 30px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 1000px;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--text-sec);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-main);
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            padding: 10px 24px;
+            border-radius: 30px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: transform 0.2s;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            padding-top: 160px;
+            padding-bottom: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .hero-badge {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin-bottom: 24px;
+            display: inline-block;
+            backdrop-filter: blur(5px);
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            line-height: 1.1;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #a0a0b0);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 24px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-sec);
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .primary-btn {
+            background: white;
+            color: black;
+            padding: 16px 40px;
+            border-radius: 40px;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 18px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255,255,255,0.2);
+        }
+
+        /* --- Features --- */
+        .features { padding: 80px 0; }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            transition: 0.4s;
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-10px);
+        }
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .glass-card h3 { font-size: 24px; margin-bottom: 12px; }
+        .glass-card p { color: var(--text-sec); line-height: 1.5; }
+        .glass-card img {
+            width: 100%;
+            border-radius: 16px;
+            margin-top: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        /* --- Download Section --- */
+        .download-wrapper { padding: 100px 0; }
+        .download-card {
+            background: linear-gradient(180deg, rgba(20,20,30,0.8), rgba(10,10,15,0.9));
+            border-radius: 40px;
+            padding: 60px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+        .download-btn-large {
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            font-size: 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(176, 0, 255, 0.3);
+            transition: 0.3s;
+            margin-top: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* --- NEW DETAILED FOOTER STYLES (FROM SCREENSHOT) --- */
+        footer {
+            padding: 80px 0 30px;
+            background: linear-gradient(to top, #000000, rgba(10, 10, 25, 0.8));
+            border-top: 1px solid var(--glass-border);
+            position: relative;
+        }
+
+        .footer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-heading {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        /* Social Icons Grid */
+        .social-media-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .social-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            gap: 10px;
+            group: hover;
+        }
+
+        .social-bubble {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--text-sec);
+            transition: all 0.3s ease;
+        }
+
+        .social-item span {
+            font-size: 12px;
+            color: var(--text-sec);
+            font-weight: 500;
+        }
+
+        .social-item:hover .social-bubble {
+            background: var(--accent-1);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(176, 0, 255, 0.4);
+            border-color: transparent;
+        }
+        
+        .social-item:hover span {
+            color: white;
+        }
+
+        /* Email Box */
+        .email-display-box {
+            background: rgba(20, 10, 30, 0.6);
+            border: 1px solid rgba(176, 0, 255, 0.3);
+            padding: 15px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            color: var(--accent-1);
+            margin-bottom: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Central Logo Area */
+        .footer-center-logo {
+            width: 180px;
+            height: 100px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .footer-center-logo img {
+            max-width: 60%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+        /* Dev Contact Section (The Box from Screenshot) */
+        .dev-contact-card {
+            background: rgba(15, 20, 35, 0.7);
+            border: 1px solid rgba(0, 234, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            margin-bottom: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dev-text {
+            font-size: 1.2rem;
+            color: #d0d0e0;
+            margin-bottom: 25px;
+        }
+
+        .telegram-big-btn {
+            background: linear-gradient(90deg, #0088cc, #00aaff);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(0, 136, 204, 0.3);
+            transition: all 0.3s;
+        }
+
+        .telegram-big-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 136, 204, 0.5);
+        }
+
+        .click-hint {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            font-style: italic;
+            color: var(--text-sec);
+        }
+
+        /* Copyright */
+        .copyright-text {
+            color: #666;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            width: 100%;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .nav-links, .nav-btn { display: none; }
+            .mobile-menu-toggle { display: block; }
+            .glass-nav { width: 95%; padding: 15px 20px; }
+            
+            .social-bubble { width: 50px; height: 50px; font-size: 20px; }
+            .social-media-grid { gap: 15px; }
+            
+            .mobile-menu-overlay {
+                position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+                background: rgba(0,0,0,0.95); z-index: 99;
+                display: flex; flex-direction: column; justify-content: center;
+                align-items: center; gap: 30px; opacity: 0; pointer-events: none; transition: 0.3s;
+            }
+            .mobile-menu-overlay.active { opacity: 1; pointer-events: all; }
+            .mobile-menu-overlay a { color: white; font-size: 24px; text-decoration: none; }
+        }
+/* --- FOOTER STYLES (Glassmorphism Theme) --- */
+footer {
+    padding: 80px 0 30px;
+    background: linear-gradient(to top, #020005, rgba(15, 5, 25, 0.9));
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.footer-heading {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Social Icons */
+.social-media-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.social-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    gap: 12px;
+}
+
+.social-bubble {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #a0a0b0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    backdrop-filter: blur(10px);
+}
+
+.social-item span {
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+    transition: 0.3s;
+}
+
+.social-item:hover .social-bubble {
+    background: linear-gradient(135deg, #b000ff, #00eaff);
+    color: white;
+    transform: translateY(-8px) scale(1.1);
+    box-shadow: 0 10px 30px rgba(176, 0, 255, 0.4);
+    border-color: transparent;
+}
+
+.social-item:hover span { color: white; }
+
+/* Email Box */
+.email-display-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(176, 0, 255, 0.3);
+    padding: 15px 45px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    color: #00eaff;
+    margin-bottom: 60px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: 0.3s;
+}
+
+.email-display-box:hover {
+    background: rgba(176, 0, 255, 0.1);
+    box-shadow: 0 0 20px rgba(176, 0, 255, 0.2);
+}
+
+/* --- CREATED BY HIGHLIGHT (The Big Part) --- */
+.neon-creator-box {
+    margin: 20px 0 60px;
+    padding: 40px;
+    border-radius: 30px;
+    background: radial-gradient(circle at center, rgba(176, 0, 255, 0.1) 0%, transparent 70%);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+}
+
+/* Glowing Border Animation */
+.neon-creator-box::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 30px;
+    padding: 2px;
+    background: linear-gradient(45deg, #b000ff, transparent, #00eaff);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+}
+
+.small-tag {
+    font-size: 0.9rem;
+    letter-spacing: 3px;
+    color: #a0a0b0;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.massive-glow-text {
+    font-size: 4rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1;
+    background: linear-gradient(to right, #fff, #b000ff, #00eaff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 10px 30px rgba(176, 0, 255, 0.3);
+    letter-spacing: -2px;
+    transition: 0.3s;
+}
+
+.neon-creator-box:hover .massive-glow-text {
+    text-shadow: 0 0 50px rgba(0, 234, 255, 0.6);
+    transform: scale(1.02);
+}
+
+/* Contact Box */
+.dev-contact-card {
+    background: rgba(20, 20, 30, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 700px;
+    width: 100%;
+    margin-bottom: 40px;
+    backdrop-filter: blur(10px);
+}
+
+.dev-text {
+    font-size: 1.2rem;
+    color: #e0e0e0;
+    margin-bottom: 25px;
+}
+
+.telegram-big-btn {
+    background: linear-gradient(90deg, #0088cc, #00aaff);
+    color: white;
+    padding: 18px 50px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0, 136, 204, 0.3);
+    transition: all 0.3s;
+}
+
+.telegram-big-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 170, 255, 0.6);
+    background: linear-gradient(90deg, #00aaff, #0088cc);
+}
+
+.click-hint {
+    display: block;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
+    font-style: italic;
+}
+
+.copyright-text {
+    color: #555;
+    font-size: 0.9rem;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    width: 100%;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+    .massive-glow-text {
+        font-size: 2.5rem;
+    }
+    .social-media-grid {
+        gap: 15px;
+    }
+    .social-bubble {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <!-- Glowing Blobs Background -->
+    <div class="glow-blob blob-1"></div>
+    <div class="glow-blob blob-2"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="glass-nav">
+           <div class="logo">
+    <img src="https://i.ibb.co/nNKgBwnj/IMG-20260111-111417-231.jpg" alt="VeinStrike Logo">
+    VeinStrike Esports
+</div>
+            
+            <div class="nav-links">
+                <a href="#home">Overview</a>
+                <a href="#features">Features</a>
+                <a href="#about">Community</a>
+            </div>
+
+            <a href="#download" class="nav-btn">Get App</a>
+
+            <div class="mobile-menu-toggle" id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenu">
+        <a href="#home" class="menu-link">Home</a>
+        <a href="#features" class="menu-link">Features</a>
+        <a href="#download" class="menu-link">Download</a>
+        <a href="#about" class="menu-link">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-badge">v2.4.1 Update Live</div>
+            <h1>The Future of<br>Esports Management</h1>
+            <p>Experience the next generation of competitive gaming. Manage teams, track stats, and dominate the league with our cutting-edge platform.</p>
+            
+            <div class="hero-buttons">
+                <button id="heroDownloadBtn" class="primary-btn">
+                    <i class="fas fa-download"></i> Download APK
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Glass Cards / Screenshots -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="grid-container">
+                <div class="glass-card">
+                    <i class="fas fa-trophy card-icon"></i>
+                    <h3>Tournament Hub</h3>
+                    <p>Participate in elite tournaments with real-time bracket updates and instant notifications.</p>
+                    <img src="https://i.ibb.co/HfNVLvyY/In-Shot-20260111-113913548.jpg" alt="Tournament Hub Screenshot">
+                </div>
+
+                <div class="glass-card">
+                    <i class="fas fa-chart-pie card-icon"></i>
+                    <h3>Advanced Analytics</h3>
+                    <p>Track every kill, death, and assist. Visualized data to help improve your team's performance.</p>
+                    <img src="https://i.ibb.co/0ydkrKLD/In-Shot-20260111-113933451.jpg" alt="Analytics Screenshot">
+                </div>
+
+                <div class="glass-card">
+                    <i class="fas fa-users card-icon"></i>
+                    <h3>Team Management</h3>
+                    <p>Build your roster, assign roles, and strategize within a unified dashboard.</p>
+                    <img src="https://i.ibb.co/N2sqJLWX/In-Shot-20260111-113958543.jpg" alt="Team Management Screenshot">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section class="download-wrapper" id="download">
+        <div class="container">
+            <div class="download-card">
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Ready to Dominate?</h2>
+                <p style="color: var(--text-sec); max-width: 500px; margin: 0 auto;">
+                    Join thousands of gamers on the most advanced platform available. 
+                    Secure, fast, and built for champions.
+                </p>
+
+                <button id="mainDownloadBtn" class="download-btn-large">
+                    <i class="fab fa-android"></i> Install for Android
+                </button>
+
+                <div style="margin-top: 20px; font-size: 13px; opacity: 0.6;">
+                    Requires Android 8.0+ • File size: 8MB
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <footer id="about">
+    <div class="container footer-container">
+    <!-- BIG HIGHLIGHTED CREATED BY SECTION -->
+        <div class="neon-creator-box">
+            <p class="small-tag">DESIGNED & DEVELOPED BY</p>
+            <h1 class="massive-glow-text">KNIGHT LTD</h1>
+        </div>
+        
+        <!-- Social Media Section -->
+        <p class="footer-heading">Follow us on social media:</p>
+        
+        <div class="social-media-grid">
+            <a href="https://youtube.com/@kinghtofficalz?si=D0qypsVV4Pw8B169" class="social-item">
+                <div class="social-bubble"><i class="fab fa-youtube"></i></div>
+                <span>YouTube</span>
+            </a>
+            <a href="https://t.me/knightofficalz" class="social-item">
+                <div class="social-bubble"><i class="fab fa-telegram-plane"></i></div>
+                <span>Telegram</span>
+            </a>
+            <a href="https://whatsapp.com/channel/0029VbBslqDJ3jv2bi7NIy3N" class="social-item">
+                <div class="social-bubble"><i class="fab fa-whatsapp"></i></div>
+                <span>WhatsApp</span>
+            </a>
+            <a href="https://www.instagram.com/knight_.officalz?igsh=MTN1NWlsc2Z2MTZtdA==" class="social-item">
+                <div class="social-bubble"><i class="fab fa-instagram"></i></div>
+                <span>Instagram</span>
+            </a>
+            <a href="mailto:knightservice24x7@gmail.com" class="social-item">
+                <div class="social-bubble"><i class="fas fa-envelope"></i></div>
+                <span>Email</span>
+            </a>
+        </div>
+
+        <!-- Email Box -->
+        <div class="email-display-box">
+            <i class="fas fa-envelope"></i> knightservice24x7@gmail.com
+        </div>
+
+       
+
+        <!-- Dev Contact Card -->
+        <div class="dev-contact-card">
+            <p class="dev-text">End for create website & app. Contact us on Telegram:</p>
+            <a href="httoshttps://t.me/knightltdofficalz" class="telegram-big-btn">
+                <i class="fab fa-telegram-plane"></i> Contact Us on Telegram
+            </a>
+            <span class="click-hint">Click here to message us directly</span>
+        </div>
+
+        <!-- Copyright -->
+        <div class="copyright-text">
+            &copy; 2026 veinstriker esports. All rights reserved. | Designed for elite gamers worldwide.
+        </div>
+
+    </div>
+</footer>
+
+    <script>
+        // Mobile Menu Logic
+        const menuBtn = document.getElementById('menuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuLinks = document.querySelectorAll('.menu-link');
+
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            const icon = menuBtn.querySelector('i');
+            if(mobileMenu.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                menuBtn.querySelector('i').classList.remove('fa-times');
+                menuBtn.querySelector('i').classList.add('fa-bars');
+            });
+        });
+
+        // REUSABLE DOWNLOAD FUNCTION
+        function triggerDownload(btnElement) {
+            const downloadUrl = 'vein-striker.apk'; 
+            const originalText = btnElement.innerHTML;
+            
+            // Loading State
+            btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Starting...';
+            btnElement.disabled = true;
+            btnElement.style.opacity = '0.7';
+
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = downloadUrl;
+                link.setAttribute('download', 'vein-striker.apk');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Success State
+                btnElement.innerHTML = '<i class="fas fa-check-circle"></i> Started!';
+                
+                // Reset
+                setTimeout(() => {
+                    btnElement.innerHTML = originalText;
+                    btnElement.disabled = false;
+                    btnElement.style.opacity = '1';
+                }, 2000);
+            }, 1000);
+        }
+
+        document.getElementById('heroDownloadBtn').addEventListener('click', function() {
+            triggerDownload(this);
+        });
+
+        document.getElementById('mainDownloadBtn').addEventListener('click', function() {
+            triggerDownload(this);
+        });
+    </script>
+</body>
+</html>
